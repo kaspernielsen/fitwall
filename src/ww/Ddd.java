@@ -60,10 +60,12 @@ public class Ddd {
     }
 
 //    static final String BASE_URL = "https://untrusted-root.badssl.com/icons/icon-green.png";
+//    static final String BASE_URL = "https://gst-arcgis-p02.prod.sitad.dk/arcgis/rest/services/SampleWorldCities/MapServer/exts/MaritimeChartService/WMSServer?WMS&SERVICENAME=enc_dk_3857&VERSION=1.3.0&LOGIN=StatSofart&PASSWORD=114karls&LAYERS=8,7,6,5,4,3,2,1,0&REQUEST=GetMap&FORMAT=image%2Fpng&TRANSPARENT=TRUE&LAYERS=cells&WIDTH=256&HEIGHT=256&CRS=EPSG%3A3857&STYLES=&BBOX=1056665.4790142775%2C7807583.817161044%2C1076233.3582552825%2C7827151.69640205";
 
-    static final String BASE_URL = "https://gst-arcgis-p02.prod.sitad.dk/arcgis/rest/services/SampleWorldCities/MapServer/exts/MaritimeChartService/WMSServer?WMS&SERVICENAME=enc_dk_3857&VERSION=1.3.0&LOGIN=StatSofart&PASSWORD=114karls&LAYERS=8,7,6,5,4,3,2,1,0&REQUEST=GetMap&FORMAT=image%2Fpng&TRANSPARENT=TRUE&LAYERS=cells&WIDTH=256&HEIGHT=256&CRS=EPSG%3A3857&STYLES=&BBOX=1056665.4790142775%2C7807583.817161044%2C1076233.3582552825%2C7827151.69640205";
+    static final String BASE_URL = "https://gst-arcgis-p02.prod.sitad.dk/arcgis/rest/services/SampleWorldCities/MapServer/exts/MaritimeChartService/WMSServer?";
 
     static class WMSHandler implements HttpHandler {
+        
         @Override
         public void handle(HttpExchange t) throws IOException {
             byte[] b = readImage(t.getRequestURI());
@@ -76,7 +78,9 @@ public class Ddd {
     }
 
     static byte[] readImage(URI request) throws IOException {
-        BufferedImage image = ImageIO.read(new URL(BASE_URL));
+        String url = BASE_URL + request.getRawQuery();
+        System.out.println("Fetching " + url);
+        BufferedImage image = ImageIO.read(new URL(url));
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ImageIO.write(image, "png", baos);
         return baos.toByteArray();
