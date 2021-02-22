@@ -22,6 +22,8 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.URL;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.imageio.ImageIO;
 import javax.net.ssl.HttpsURLConnection;
@@ -53,9 +55,23 @@ public class Ddd {
             HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
         } catch (Exception e) {}
 
-        HttpServer server = HttpServer.create(new InetSocketAddress(8000), 0);
+        final HttpServer server = HttpServer.create(new InetSocketAddress(8000), 0);
+        final ExecutorService es = Executors.newFixedThreadPool(10);
+        server.setExecutor(es);
         server.createContext("/wms", new WMSHandler());
         server.setExecutor(null); // creates a default executor
+
+        System.out.println("Listing on " + server.getAddress());
+        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                System.out.println("SHUTDOWN");
+                es.shutdownNow();
+                server.stop(0);
+            }
+        }) );
+
         server.start();
     }
 
@@ -65,7 +81,7 @@ public class Ddd {
     static final String BASE_URL = "https://gst-arcgis-p02.prod.sitad.dk/arcgis/rest/services/SampleWorldCities/MapServer/exts/MaritimeChartService/WMSServer?";
 
     static class WMSHandler implements HttpHandler {
-        
+
         @Override
         public void handle(HttpExchange t) throws IOException {
             byte[] b = readImage(t.getRequestURI());
@@ -85,6 +101,4 @@ public class Ddd {
         ImageIO.write(image, "png", baos);
         return baos.toByteArray();
     }
-
-    // https://untrusted-root.badssl.com/icons/icon-green.png
 }
