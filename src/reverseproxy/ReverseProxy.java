@@ -89,6 +89,7 @@ public class ReverseProxy {
             if (msg == null) {
                 msg = "";
             }
+            System.out.println("Echo: " + msg);
             byte[] b = msg.getBytes();
             t.sendResponseHeaders(200, b.length);
             OutputStream os = t.getResponseBody();

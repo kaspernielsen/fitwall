@@ -31,12 +31,12 @@ public class ReverseProxyTester {
         for (;;) {
             HttpClient client = HttpClient.newHttpClient();
 
-            HttpRequest request = HttpRequest.newBuilder().uri(URI.create("http://reverse-proxy/echo?foooo" + System.currentTimeMillis())).build();
+            HttpRequest request = HttpRequest.newBuilder().uri(URI.create("http://niord-reverseproxy:8000/echo?foooo" + System.currentTimeMillis())).build();
 
             HttpResponse<String> response = client.send(request, BodyHandlers.ofString());
-            System.out.println(response);
+            System.out.println("Got response" + response);
             
-            Thread.sleep(100000);
+            Thread.sleep(10000);
         }
     }
 }

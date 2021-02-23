@@ -1,6 +1,6 @@
-FROM java:openjdk-11-jdk
+FROM openjdk:11-jre-slim
 
-ADD bin/* /app/bin/
+ADD bin/reverseproxy/* /app/bin/reverseproxy/
 
 EXPOSE 8000
 
