@@ -1,7 +1,7 @@
-FROM java:openjdk-8-jdk
+FROM java:openjdk-11-jdk
 
-ADD bin/ww/* /app/bin/ww/
+ADD bin/* /app/bin/
 
 EXPOSE 8000
 
-CMD exec java -classpath /app/bin/ ww.Ddd
+CMD exec java -classpath /app/bin/ reverseproxy.ReverseProxy

@@ -1,0 +1,5 @@
+FROM java:openjdk-11-jdk
+
+ADD bin/* /app/bin/
+
+CMD exec java -classpath /app/bin/ test.ReverseProxyTester

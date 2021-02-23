@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ww;
+package reverseproxy;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
@@ -35,7 +35,7 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
-public class Ddd {
+public class ReverseProxy {
 
     public static void main(String[] args) throws Exception {
         TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
@@ -59,6 +59,7 @@ public class Ddd {
         final ExecutorService es = Executors.newFixedThreadPool(10);
         server.setExecutor(es);
         server.createContext("/wms", new WMSHandler());
+        server.createContext("/echo", new EchoHandler());
         server.setExecutor(null); // creates a default executor
 
         System.out.println("Listing on " + server.getAddress());
@@ -70,7 +71,7 @@ public class Ddd {
                 es.shutdownNow();
                 server.stop(0);
             }
-        }) );
+        }));
 
         server.start();
     }
@@ -79,6 +80,23 @@ public class Ddd {
 //    static final String BASE_URL = "https://gst-arcgis-p02.prod.sitad.dk/arcgis/rest/services/SampleWorldCities/MapServer/exts/MaritimeChartService/WMSServer?WMS&SERVICENAME=enc_dk_3857&VERSION=1.3.0&LOGIN=StatSofart&PASSWORD=114karls&LAYERS=8,7,6,5,4,3,2,1,0&REQUEST=GetMap&FORMAT=image%2Fpng&TRANSPARENT=TRUE&LAYERS=cells&WIDTH=256&HEIGHT=256&CRS=EPSG%3A3857&STYLES=&BBOX=1056665.4790142775%2C7807583.817161044%2C1076233.3582552825%2C7827151.69640205";
 
     static final String BASE_URL = "https://gst-arcgis-p02.prod.sitad.dk/arcgis/rest/services/SampleWorldCities/MapServer/exts/MaritimeChartService/WMSServer?";
+
+    static class EchoHandler implements HttpHandler {
+
+        @Override
+        public void handle(HttpExchange t) throws IOException {
+            String msg = t.getRequestURI().getRawQuery();
+            if (msg == null) {
+                msg = "";
+            }
+            byte[] b = msg.getBytes();
+            t.sendResponseHeaders(200, b.length);
+            OutputStream os = t.getResponseBody();
+            os.write(b);
+            os.flush();
+            os.close();
+        }
+    }
 
     static class WMSHandler implements HttpHandler {
 

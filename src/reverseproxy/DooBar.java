@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ww;
+package reverseproxy;
 
 import java.awt.image.BufferedImage;
 import java.io.FileOutputStream;
@@ -33,6 +33,7 @@ import javax.net.ssl.X509TrustManager;
  */
 public class DooBar {
 
+    //Just old code we know that works
     public static void main(String[] args) throws MalformedURLException, IOException {
         TrustManager[] trustAllCerts = new TrustManager[]{
                 new X509TrustManager() {
